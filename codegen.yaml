@@ -1,0 +1,12 @@
+overwrite: true
+schema: "https://fairpay.dev.minsky.cc/graphql"
+documents: "graphql/**/*.graphql"
+generates:
+    integration/graphql.tsx:
+        plugins:
+            - "typescript"
+            - "typescript-operations"
+            - "typescript-urql"
+        config:
+            withComponent: true
+            withHooks: true
