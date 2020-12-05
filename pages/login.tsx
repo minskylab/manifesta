@@ -7,10 +7,7 @@ import LoginCard from "../components/ui/LoginCard";
 
 const LoginPage: NextPage = () => {
     return <Center>
-                <Box>Login Page</Box>
                 <LoginCard/>
-                
-    
             </Center>;
 };
 
