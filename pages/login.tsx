@@ -6,12 +6,11 @@ import LoginCard from "../components/ui/LoginCard";
 // TODO: Put your login card here
 
 const LoginPage: NextPage = () => {
-    return <Center>
-                <Box>Login Page</Box>
-                <LoginCard/>
-                
-    
-            </Center>;
+    return (
+        <Center>
+            <LoginCard />
+        </Center>
+    );
 };
 
 export default LoginPage;
