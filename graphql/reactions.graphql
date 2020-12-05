@@ -1,0 +1,29 @@
+query PublicReactions {
+    reactions(sort: "date") {
+        id
+        title
+        body
+        score
+        date
+        votes {
+            voter {
+                id
+                name
+            }
+            vote
+            when
+        }
+        creator {
+            id
+            owner {
+                username
+            }
+        }
+        promoters {
+            name
+        }
+        domain {
+            host
+        }
+    }
+}

@@ -1,9 +1,17 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Center } from "@chakra-ui/react";
 import { NextPage } from "next";
 import React from "react";
+import LoginCard from "../components/ui/LoginCard";
+
+// TODO: Put your login card here
 
 const LoginPage: NextPage = () => {
-    return <Box>Login Page</Box>;
+    return <Center>
+                <Box>Login Page</Box>
+                <LoginCard/>
+                
+    
+            </Center>;
 };
 
 export default LoginPage;
