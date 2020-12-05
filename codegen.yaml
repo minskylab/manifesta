@@ -1,5 +1,5 @@
 overwrite: true
-schema: "https://fairpay.dev.minsky.cc/graphql"
+schema: "http://174.138.47.0/graphql"
 documents: "graphql/**/*.graphql"
 generates:
     integration/graphql.tsx:

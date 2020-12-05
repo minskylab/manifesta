@@ -4,7 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { createClient, Provider as URQLProvider } from "urql";
 
 const client = createClient({
-    url: "https://fairpay.dev.minsky.cc/graphql",
+    url: "http://174.138.47.0/graphql",
 });
 
 const MauthApp = ({ Component, pageProps }: AppProps): JSX.Element => {
