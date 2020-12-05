@@ -3,6 +3,8 @@ import { NextPage } from "next";
 import { motion } from "framer-motion";
 import { Button, Center, Text } from "@chakra-ui/react";
 import ReactionCard from "../components/ui/ReactionCard";
+import LoginCard from "../components/ui/LoginCard";
+import '@emotion/react'
 
 interface HomeProps {
     userAgent: string;
@@ -13,6 +15,7 @@ const Home: NextPage<HomeProps> = ({ userAgent }: HomeProps) => {
         <Center>
             <Text>Hello</Text>
             <Button>Click Me</Button>
+            
         </Center>
     );
 };
