@@ -58,6 +58,7 @@ const Home: NextPage<HomeProps> = ({ userAgent }: HomeProps) => {
                             </Box>
                             <Flex
                                 flex={1}
+                                height={"100%"}
                                 maxWidth={"3rem"}
                                 direction={"column"}
                                 alignItems={"center"}
