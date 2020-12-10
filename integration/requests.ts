@@ -1,11 +1,12 @@
+import { GraphQLClient } from 'graphql-request';
+import { print } from 'graphql';
+import { GraphQLError } from 'graphql-request/dist/types';
+import { Headers } from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
-import * as React from 'react';
-import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1444,6 +1445,17 @@ export type RegisterMutation = (
   ) }
 );
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'UsersPermissionsMe' }
+    & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+  )> }
+);
+
 export type PublicReactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1495,15 +1507,6 @@ export const LoginDocument = gql`
   }
 }
     `;
-
-export const LoginComponent = (props: Omit<Urql.MutationProps<LoginMutation, LoginMutationVariables>, 'query'> & { variables?: LoginMutationVariables }) => (
-  <Urql.Mutation {...props} query={LoginDocument} />
-);
-
-
-export function useLoginMutation() {
-  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
-};
 export const ProfileInitilizationDocument = gql`
     mutation ProfileInitilization($userID: ID!, $name: String!) {
   createProfile(input: {data: {owner: $userID, name: $name}}) {
@@ -1514,15 +1517,6 @@ export const ProfileInitilizationDocument = gql`
   }
 }
     `;
-
-export const ProfileInitilizationComponent = (props: Omit<Urql.MutationProps<ProfileInitilizationMutation, ProfileInitilizationMutationVariables>, 'query'> & { variables?: ProfileInitilizationMutationVariables }) => (
-  <Urql.Mutation {...props} query={ProfileInitilizationDocument} />
-);
-
-
-export function useProfileInitilizationMutation() {
-  return Urql.useMutation<ProfileInitilizationMutation, ProfileInitilizationMutationVariables>(ProfileInitilizationDocument);
-};
 export const RegisterDocument = gql`
     mutation Register($username: String!, $email: String!, $password: String!) {
   register(input: {username: $username, email: $email, password: $password}) {
@@ -1541,15 +1535,16 @@ export const RegisterDocument = gql`
   }
 }
     `;
-
-export const RegisterComponent = (props: Omit<Urql.MutationProps<RegisterMutation, RegisterMutationVariables>, 'query'> & { variables?: RegisterMutationVariables }) => (
-  <Urql.Mutation {...props} query={RegisterDocument} />
-);
-
-
-export function useRegisterMutation() {
-  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
-};
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    username
+    email
+    confirmed
+  }
+}
+    `;
 export const PublicReactionsDocument = gql`
     query PublicReactions {
   reactions(sort: "date") {
@@ -1582,11 +1577,27 @@ export const PublicReactionsDocument = gql`
 }
     `;
 
-export const PublicReactionsComponent = (props: Omit<Urql.QueryProps<PublicReactionsQuery, PublicReactionsQueryVariables>, 'query'> & { variables?: PublicReactionsQueryVariables }) => (
-  <Urql.Query {...props} query={PublicReactionsDocument} />
-);
+export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 
 
-export function usePublicReactionsQuery(options: Omit<Urql.UseQueryArgs<PublicReactionsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<PublicReactionsQuery>({ query: PublicReactionsDocument, ...options });
-};
+const defaultWrapper: SdkFunctionWrapper = sdkFunction => sdkFunction();
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    Login(variables: LoginMutationVariables): Promise<{ data?: LoginMutation | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<LoginMutation>(print(LoginDocument), variables));
+    },
+    ProfileInitilization(variables: ProfileInitilizationMutationVariables): Promise<{ data?: ProfileInitilizationMutation | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<ProfileInitilizationMutation>(print(ProfileInitilizationDocument), variables));
+    },
+    Register(variables: RegisterMutationVariables): Promise<{ data?: RegisterMutation | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<RegisterMutation>(print(RegisterDocument), variables));
+    },
+    Me(variables?: MeQueryVariables): Promise<{ data?: MeQuery | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<MeQuery>(print(MeDocument), variables));
+    },
+    PublicReactions(variables?: PublicReactionsQueryVariables): Promise<{ data?: PublicReactionsQuery | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<PublicReactionsQuery>(print(PublicReactionsDocument), variables));
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;

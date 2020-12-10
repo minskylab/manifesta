@@ -1,25 +1,42 @@
 import React from "react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { motion } from "framer-motion";
 import ReactionCard from "../components/ui/ReactionCard";
 import LoginCard from "../components/ui/LoginCard";
 import "@emotion/react";
-import { usePublicReactionsQuery } from "../integration/graphql";
+import { usePublicReactionsQuery } from "../integration/urql";
 import { Box, Flex, Heading, Center, Text } from "@chakra-ui/react";
 import { CheckIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import ManifestaHeader from "../components/ui/Header";
+import ManifestaHeader, { ManifestaRoute } from "../components/ui/Header";
+import nookies from "nookies";
+import { AuthUserData, getAuthedUser, strapiClient, strapiSDK } from "../lib/server";
+import { useRouter } from "next/router";
 
 const MotionFlex = motion.custom(Flex);
 interface HomeProps {
-    userAgent: string;
+    userData?: AuthUserData;
 }
 
-const Home: NextPage<HomeProps> = ({ userAgent }: HomeProps) => {
+const Home: NextPage<HomeProps> = ({ userData }: HomeProps) => {
     const [res, _] = usePublicReactionsQuery();
+    const router = useRouter();
+
+    console.log(userData?.id);
+
+    const onRouteChange = (route: ManifestaRoute) => {
+        console.log(route);
+    };
+
+    const onLogin = async () => await router.push("/login");
 
     return (
         <>
-            <ManifestaHeader />
+            <ManifestaHeader
+                currentRoute={"explore"}
+                onRouteChange={onRouteChange}
+                onLogin={onLogin}
+                authUserData={userData}
+            />
             <Box bg={"gray.50"} w={"100%"}>
                 <Flex justifyContent={"center"}>
                     <Box mt={"6rem"}>
@@ -96,9 +113,10 @@ const Home: NextPage<HomeProps> = ({ userAgent }: HomeProps) => {
     );
 };
 
-Home.getInitialProps = async ({ req }) => {
-    const userAgent = req ? req.headers["user-agent"] || "" : navigator.userAgent;
-    return { userAgent };
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const userData = await getAuthedUser(ctx);
+
+    return { props: { userData } };
 };
 
 export default Home;

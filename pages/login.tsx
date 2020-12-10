@@ -1,11 +1,10 @@
 import { Box, Center, useToast } from "@chakra-ui/react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import LoginCard from "../components/ui/LoginCard";
-import { useLoginMutation } from "../integration/graphql";
-
-// TODO: Put your login card here
+import { useLoginMutation } from "../integration/urql";
+import nookies from "nookies";
 
 const LoginPage: NextPage = () => {
     const [loginResult, login] = useLoginMutation();
@@ -16,6 +15,12 @@ const LoginPage: NextPage = () => {
         login({
             email,
             password,
+        }).then((result) => {
+            if (result.data && result.data.login) {
+                const token = result.data.login.jwt || "";
+                nookies.set(null, "manifestaAuthCookie", token, {});
+                router.push("/");
+            }
         });
     };
 
@@ -28,21 +33,24 @@ const LoginPage: NextPage = () => {
                 duration: 2000,
             });
         }
-
-        if (loginResult.data && loginResult.data.login) {
-            const token = loginResult.data.login.jwt || "";
-            localStorage.setItem("token-auth", token);
-            router.push("/");
-        }
     }, [loginResult]);
-
-    /// TODO: Validate if token exists into local storage
 
     return (
         <Box>
             <LoginCard onLogin={onLogin} loading={loginResult.fetching} />
         </Box>
     );
+};
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const { manifestaAuthCookie } = nookies.get(ctx);
+    // console.log(manifestaAuthCookie);
+    if (manifestaAuthCookie) {
+        ctx.res.writeHead(301, { Location: "/" });
+        ctx.res.end();
+    }
+
+    return { props: {} };
 };
 
 export default LoginPage;
