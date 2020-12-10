@@ -1445,6 +1445,17 @@ export type RegisterMutation = (
   ) }
 );
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'UsersPermissionsMe' }
+    & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+  )> }
+);
+
 export type PublicReactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1524,6 +1535,16 @@ export const RegisterDocument = gql`
   }
 }
     `;
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    username
+    email
+    confirmed
+  }
+}
+    `;
 export const PublicReactionsDocument = gql`
     query PublicReactions {
   reactions(sort: "date") {
@@ -1570,6 +1591,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     Register(variables: RegisterMutationVariables): Promise<{ data?: RegisterMutation | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
         return withWrapper(() => client.rawRequest<RegisterMutation>(print(RegisterDocument), variables));
+    },
+    Me(variables?: MeQueryVariables): Promise<{ data?: MeQuery | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<MeQuery>(print(MeDocument), variables));
     },
     PublicReactions(variables?: PublicReactionsQueryVariables): Promise<{ data?: PublicReactionsQuery | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
         return withWrapper(() => client.rawRequest<PublicReactionsQuery>(print(PublicReactionsDocument), variables));

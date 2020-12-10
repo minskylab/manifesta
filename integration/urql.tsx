@@ -1444,6 +1444,17 @@ export type RegisterMutation = (
   ) }
 );
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'UsersPermissionsMe' }
+    & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+  )> }
+);
+
 export type PublicReactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1549,6 +1560,25 @@ export const RegisterComponent = (props: Omit<Urql.MutationProps<RegisterMutatio
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    username
+    email
+    confirmed
+  }
+}
+    `;
+
+export const MeComponent = (props: Omit<Urql.QueryProps<MeQuery, MeQueryVariables>, 'query'> & { variables?: MeQueryVariables }) => (
+  <Urql.Query {...props} query={MeDocument} />
+);
+
+
+export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
 };
 export const PublicReactionsDocument = gql`
     query PublicReactions {

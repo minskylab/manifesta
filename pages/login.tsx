@@ -15,6 +15,12 @@ const LoginPage: NextPage = () => {
         login({
             email,
             password,
+        }).then((result) => {
+            if (result.data && result.data.login) {
+                const token = result.data.login.jwt || "";
+                nookies.set(null, "manifestaAuthCookie", token, {});
+                router.push("/");
+            }
         });
     };
 
@@ -27,14 +33,6 @@ const LoginPage: NextPage = () => {
                 duration: 2000,
             });
         }
-
-        if (loginResult.data && loginResult.data.login) {
-            const token = loginResult.data.login.jwt || "";
-
-            nookies.set(null, "manifestaAuthCookie", token, {});
-
-            router.push("/");
-        }
     }, [loginResult]);
 
     return (
@@ -46,11 +44,13 @@ const LoginPage: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const { manifestaAuthCookie } = nookies.get(ctx);
+    // console.log(manifestaAuthCookie);
+    if (manifestaAuthCookie) {
+        ctx.res.writeHead(301, { Location: "/" });
+        ctx.res.end();
+    }
 
-    console.log(manifestaAuthCookie);
-    const isAuthenticated = manifestaAuthCookie == undefined;
-
-    return { props: { isAuthenticated, token: manifestaAuthCookie } };
+    return { props: {} };
 };
 
 export default LoginPage;

@@ -7,20 +7,36 @@ import "@emotion/react";
 import { usePublicReactionsQuery } from "../integration/urql";
 import { Box, Flex, Heading, Center, Text } from "@chakra-ui/react";
 import { CheckIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
-import ManifestaHeader from "../components/ui/Header";
+import ManifestaHeader, { ManifestaRoute } from "../components/ui/Header";
 import nookies from "nookies";
+import { AuthUserData, getAuthedUser, strapiClient, strapiSDK } from "../lib/server";
+import { useRouter } from "next/router";
 
 const MotionFlex = motion.custom(Flex);
 interface HomeProps {
-    userAgent: string;
+    userData?: AuthUserData;
 }
 
-const Home: NextPage<HomeProps> = ({ userAgent }: HomeProps) => {
+const Home: NextPage<HomeProps> = ({ userData }: HomeProps) => {
     const [res, _] = usePublicReactionsQuery();
+    const router = useRouter();
+
+    console.log(userData?.id);
+
+    const onRouteChange = (route: ManifestaRoute) => {
+        console.log(route);
+    };
+
+    const onLogin = async () => await router.push("/login");
 
     return (
         <>
-            <ManifestaHeader />
+            <ManifestaHeader
+                currentRoute={"explore"}
+                onRouteChange={onRouteChange}
+                onLogin={onLogin}
+                authUserData={userData}
+            />
             <Box bg={"gray.50"} w={"100%"}>
                 <Flex justifyContent={"center"}>
                     <Box mt={"6rem"}>
@@ -98,16 +114,9 @@ const Home: NextPage<HomeProps> = ({ userAgent }: HomeProps) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { manifestaAuthCookie } = nookies.get(ctx);
+    const userData = await getAuthedUser(ctx);
 
-    console.log(manifestaAuthCookie);
-
-    if (manifestaAuthCookie) {
-        ctx.res.writeHead(301, { Location: "/" });
-        ctx.res.end();
-    }
-
-    return { props: {} };
+    return { props: { userData } };
 };
 
 export default Home;
