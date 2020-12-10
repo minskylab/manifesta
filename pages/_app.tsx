@@ -8,15 +8,10 @@ const client = createClient({
 });
 
 const MauthApp = ({ Component, pageProps }: AppProps): JSX.Element => {
-    // @ts-ignore
-    const Layout = Component.Layout ? Component.Layout : React.Fragment;
-
     return (
         <URQLProvider value={client}>
             <ChakraProvider resetCSS>
-                <Layout>
-                    <Component {...pageProps} />
-                </Layout>
+                <Component {...pageProps} />
             </ChakraProvider>
         </URQLProvider>
     );

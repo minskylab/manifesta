@@ -2,7 +2,7 @@ overwrite: true
 schema: "http://174.138.47.0/graphql"
 documents: "graphql/**/*.graphql"
 generates:
-    integration/graphql.tsx:
+    integration/urql.tsx:
         plugins:
             - "typescript"
             - "typescript-operations"
@@ -10,3 +10,10 @@ generates:
         config:
             withComponent: true
             withHooks: true
+    integration/requests.ts:
+        plugins:
+            - "typescript"
+            - "typescript-operations"
+            - typescript-graphql-request
+        config:
+            rawRequest: true

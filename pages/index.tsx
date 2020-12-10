@@ -1,13 +1,14 @@
 import React from "react";
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import { motion } from "framer-motion";
 import ReactionCard from "../components/ui/ReactionCard";
 import LoginCard from "../components/ui/LoginCard";
 import "@emotion/react";
-import { usePublicReactionsQuery } from "../integration/graphql";
+import { usePublicReactionsQuery } from "../integration/urql";
 import { Box, Flex, Heading, Center, Text } from "@chakra-ui/react";
 import { CheckIcon, TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import ManifestaHeader from "../components/ui/Header";
+import nookies from "nookies";
 
 const MotionFlex = motion.custom(Flex);
 interface HomeProps {
@@ -96,9 +97,17 @@ const Home: NextPage<HomeProps> = ({ userAgent }: HomeProps) => {
     );
 };
 
-Home.getInitialProps = async ({ req }) => {
-    const userAgent = req ? req.headers["user-agent"] || "" : navigator.userAgent;
-    return { userAgent };
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const { manifestaAuthCookie } = nookies.get(ctx);
+
+    console.log(manifestaAuthCookie);
+
+    if (manifestaAuthCookie) {
+        ctx.res.writeHead(301, { Location: "/" });
+        ctx.res.end();
+    }
+
+    return { props: {} };
 };
 
 export default Home;
