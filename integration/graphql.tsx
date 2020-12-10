@@ -1382,6 +1382,68 @@ export enum CacheControlScope {
   Private = 'PRIVATE'
 }
 
+export type LoginMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login: (
+    { __typename?: 'UsersPermissionsLoginPayload' }
+    & Pick<UsersPermissionsLoginPayload, 'jwt'>
+    & { user: (
+      { __typename?: 'UsersPermissionsMe' }
+      & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+      & { role?: Maybe<(
+        { __typename?: 'UsersPermissionsMeRole' }
+        & Pick<UsersPermissionsMeRole, 'id' | 'name' | 'type'>
+      )> }
+    ) }
+  ) }
+);
+
+export type ProfileInitilizationMutationVariables = Exact<{
+  userID: Scalars['ID'];
+  name: Scalars['String'];
+}>;
+
+
+export type ProfileInitilizationMutation = (
+  { __typename?: 'Mutation' }
+  & { createProfile?: Maybe<(
+    { __typename?: 'createProfilePayload' }
+    & { profile?: Maybe<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'name'>
+    )> }
+  )> }
+);
+
+export type RegisterMutationVariables = Exact<{
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & { register: (
+    { __typename?: 'UsersPermissionsLoginPayload' }
+    & Pick<UsersPermissionsLoginPayload, 'jwt'>
+    & { user: (
+      { __typename?: 'UsersPermissionsMe' }
+      & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+      & { role?: Maybe<(
+        { __typename?: 'UsersPermissionsMeRole' }
+        & Pick<UsersPermissionsMeRole, 'id' | 'name' | 'type'>
+      )> }
+    ) }
+  ) }
+);
+
 export type PublicReactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1415,6 +1477,79 @@ export type PublicReactionsQuery = (
 );
 
 
+export const LoginDocument = gql`
+    mutation Login($email: String!, $password: String!) {
+  login(input: {identifier: $email, password: $password}) {
+    jwt
+    user {
+      id
+      username
+      email
+      confirmed
+      role {
+        id
+        name
+        type
+      }
+    }
+  }
+}
+    `;
+
+export const LoginComponent = (props: Omit<Urql.MutationProps<LoginMutation, LoginMutationVariables>, 'query'> & { variables?: LoginMutationVariables }) => (
+  <Urql.Mutation {...props} query={LoginDocument} />
+);
+
+
+export function useLoginMutation() {
+  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const ProfileInitilizationDocument = gql`
+    mutation ProfileInitilization($userID: ID!, $name: String!) {
+  createProfile(input: {data: {owner: $userID, name: $name}}) {
+    profile {
+      id
+      name
+    }
+  }
+}
+    `;
+
+export const ProfileInitilizationComponent = (props: Omit<Urql.MutationProps<ProfileInitilizationMutation, ProfileInitilizationMutationVariables>, 'query'> & { variables?: ProfileInitilizationMutationVariables }) => (
+  <Urql.Mutation {...props} query={ProfileInitilizationDocument} />
+);
+
+
+export function useProfileInitilizationMutation() {
+  return Urql.useMutation<ProfileInitilizationMutation, ProfileInitilizationMutationVariables>(ProfileInitilizationDocument);
+};
+export const RegisterDocument = gql`
+    mutation Register($username: String!, $email: String!, $password: String!) {
+  register(input: {username: $username, email: $email, password: $password}) {
+    jwt
+    user {
+      id
+      username
+      email
+      confirmed
+      role {
+        id
+        name
+        type
+      }
+    }
+  }
+}
+    `;
+
+export const RegisterComponent = (props: Omit<Urql.MutationProps<RegisterMutation, RegisterMutationVariables>, 'query'> & { variables?: RegisterMutationVariables }) => (
+  <Urql.Mutation {...props} query={RegisterDocument} />
+);
+
+
+export function useRegisterMutation() {
+  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
 export const PublicReactionsDocument = gql`
     query PublicReactions {
   reactions(sort: "date") {
