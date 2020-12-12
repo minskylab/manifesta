@@ -13,9 +13,9 @@ import {
     FormErrorMessage,
 } from "@chakra-ui/react";
 // import GoogleLogin from "react-google-login"
-
- import React from "react";
- import "@emotion/react";
+import React, { FC } from "react";
+import "@emotion/react";
+import { useForm } from "react-hook-form";
 
 // const responseGoogle = (response: any) => {
 //     console.log(response);
@@ -46,9 +46,11 @@ const LoginCard: FC<LoginCardProps> = ({ onLogin, loading }: LoginCardProps) => 
                 borderRadius={4}
                 textAlign="center"
                 boxShadow="lg"
+                bg={"white"}
             >
                 <Box px={4} py={10}>
-                    <Box mb={6}>
+                    <Box mb={6} align="center">
+                        <img src="/manifesta_logo.png" width="200px"  />
                         <Heading color={"gray.800"}>Ingresa con tu cuenta</Heading>
                     </Box>
                     <Box textAlign="left">
