@@ -13,6 +13,7 @@
     "devDependencies": {
         "@graphql-codegen/cli": "^1.19.0",
         "@graphql-codegen/typescript": "^1.17.11",
+        "@graphql-codegen/typescript-graphql-request": "^2.0.3",
         "@graphql-codegen/typescript-operations": "^1.17.8",
         "@graphql-codegen/typescript-urql": "^2.0.2",
         "@types/node": "^13.9.8",
@@ -34,9 +35,16 @@
         "emotion-theming": "^11.0.0",
         "framer-motion": "^2.9.5",
         "graphql": "^15.4.0",
+        "graphql-request": "^3.3.0",
         "next": "^9.5.5",
+        "next-urql": "^2.1.1",
+        "nookies": "^2.5.0",
         "react": "^16.14.0",
         "react-dom": "^16.14.0",
+        "react-google-login": "^5.1.25",
+        "react-hook-form": "^6.12.2",
+        "react-icons": "^4.1.0",
+        "react-is": "^17.0.1",
         "urql": "^1.11.4"
     }
 }

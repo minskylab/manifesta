@@ -1,11 +1,12 @@
+import { GraphQLClient } from 'graphql-request';
+import { print } from 'graphql';
+import { GraphQLError } from 'graphql-request/dist/types';
+import { Headers } from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
-import * as React from 'react';
-import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1382,6 +1383,79 @@ export enum CacheControlScope {
   Private = 'PRIVATE'
 }
 
+export type LoginMutationVariables = Exact<{
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login: (
+    { __typename?: 'UsersPermissionsLoginPayload' }
+    & Pick<UsersPermissionsLoginPayload, 'jwt'>
+    & { user: (
+      { __typename?: 'UsersPermissionsMe' }
+      & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+      & { role?: Maybe<(
+        { __typename?: 'UsersPermissionsMeRole' }
+        & Pick<UsersPermissionsMeRole, 'id' | 'name' | 'type'>
+      )> }
+    ) }
+  ) }
+);
+
+export type ProfileInitilizationMutationVariables = Exact<{
+  userID: Scalars['ID'];
+  name: Scalars['String'];
+}>;
+
+
+export type ProfileInitilizationMutation = (
+  { __typename?: 'Mutation' }
+  & { createProfile?: Maybe<(
+    { __typename?: 'createProfilePayload' }
+    & { profile?: Maybe<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'name'>
+    )> }
+  )> }
+);
+
+export type RegisterMutationVariables = Exact<{
+  username: Scalars['String'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type RegisterMutation = (
+  { __typename?: 'Mutation' }
+  & { register: (
+    { __typename?: 'UsersPermissionsLoginPayload' }
+    & Pick<UsersPermissionsLoginPayload, 'jwt'>
+    & { user: (
+      { __typename?: 'UsersPermissionsMe' }
+      & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+      & { role?: Maybe<(
+        { __typename?: 'UsersPermissionsMeRole' }
+        & Pick<UsersPermissionsMeRole, 'id' | 'name' | 'type'>
+      )> }
+    ) }
+  ) }
+);
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'UsersPermissionsMe' }
+    & Pick<UsersPermissionsMe, 'id' | 'username' | 'email' | 'confirmed'>
+  )> }
+);
+
 export type PublicReactionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1415,6 +1489,62 @@ export type PublicReactionsQuery = (
 );
 
 
+export const LoginDocument = gql`
+    mutation Login($email: String!, $password: String!) {
+  login(input: {identifier: $email, password: $password}) {
+    jwt
+    user {
+      id
+      username
+      email
+      confirmed
+      role {
+        id
+        name
+        type
+      }
+    }
+  }
+}
+    `;
+export const ProfileInitilizationDocument = gql`
+    mutation ProfileInitilization($userID: ID!, $name: String!) {
+  createProfile(input: {data: {owner: $userID, name: $name}}) {
+    profile {
+      id
+      name
+    }
+  }
+}
+    `;
+export const RegisterDocument = gql`
+    mutation Register($username: String!, $email: String!, $password: String!) {
+  register(input: {username: $username, email: $email, password: $password}) {
+    jwt
+    user {
+      id
+      username
+      email
+      confirmed
+      role {
+        id
+        name
+        type
+      }
+    }
+  }
+}
+    `;
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    username
+    email
+    confirmed
+  }
+}
+    `;
 export const PublicReactionsDocument = gql`
     query PublicReactions {
   reactions(sort: "date") {
@@ -1447,11 +1577,27 @@ export const PublicReactionsDocument = gql`
 }
     `;
 
-export const PublicReactionsComponent = (props: Omit<Urql.QueryProps<PublicReactionsQuery, PublicReactionsQueryVariables>, 'query'> & { variables?: PublicReactionsQueryVariables }) => (
-  <Urql.Query {...props} query={PublicReactionsDocument} />
-);
+export type SdkFunctionWrapper = <T>(action: () => Promise<T>) => Promise<T>;
 
 
-export function usePublicReactionsQuery(options: Omit<Urql.UseQueryArgs<PublicReactionsQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<PublicReactionsQuery>({ query: PublicReactionsDocument, ...options });
-};
+const defaultWrapper: SdkFunctionWrapper = sdkFunction => sdkFunction();
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    Login(variables: LoginMutationVariables): Promise<{ data?: LoginMutation | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<LoginMutation>(print(LoginDocument), variables));
+    },
+    ProfileInitilization(variables: ProfileInitilizationMutationVariables): Promise<{ data?: ProfileInitilizationMutation | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<ProfileInitilizationMutation>(print(ProfileInitilizationDocument), variables));
+    },
+    Register(variables: RegisterMutationVariables): Promise<{ data?: RegisterMutation | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<RegisterMutation>(print(RegisterDocument), variables));
+    },
+    Me(variables?: MeQueryVariables): Promise<{ data?: MeQuery | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<MeQuery>(print(MeDocument), variables));
+    },
+    PublicReactions(variables?: PublicReactionsQueryVariables): Promise<{ data?: PublicReactionsQuery | undefined; extensions?: any; headers: Headers; status: number; errors?: GraphQLError[] | undefined; }> {
+        return withWrapper(() => client.rawRequest<PublicReactionsQuery>(print(PublicReactionsDocument), variables));
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;
