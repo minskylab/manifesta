@@ -36,7 +36,7 @@ const LoginPage: NextPage = () => {
     }, [loginResult]);
 
     return (
-        <Box>
+        <Box bg={"gray.200"}>
             <LoginCard onLogin={onLogin} loading={loginResult.fetching} />
         </Box>
     );
