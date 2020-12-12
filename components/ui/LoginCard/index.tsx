@@ -1,4 +1,5 @@
 import {
+    Text,
     theme,
     Box,
     Flex,
@@ -13,7 +14,6 @@ import {
     FormErrorMessage,
 } from "@chakra-ui/react";
 // import GoogleLogin from "react-google-login"
-import Image from 'next/image';
 import React, { FC } from "react";
 import "@emotion/react";
 import { useForm } from "react-hook-form";
@@ -51,7 +51,9 @@ const LoginCard: FC<LoginCardProps> = ({ onLogin, loading }: LoginCardProps) => 
             >
                 <Box px={4} py={10}>
                     <Box mb={6} align="center">
-                        <img src="/manifesta_logo.png" width="200px" />
+                        <Text fontFamily={"Rubik"} fontSize={"1.42rem"} fontWeight={"700"}>
+                            MANIFESTA
+                        </Text>
                         <Heading color={"gray.800"}>Ingresa con tu cuenta</Heading>
                     </Box>
                     <Box textAlign="left">
