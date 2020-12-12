@@ -51,9 +51,13 @@ const LoginCard: FC<LoginCardProps> = ({ onLogin, loading }: LoginCardProps) => 
             >
                 <Box px={4} py={10}>
                     <Box mb={6} align="center">
+<<<<<<< HEAD
                         <Text fontFamily={"Rubik"} fontSize={"1.42rem"} fontWeight={"700"}>
                             MANIFESTA
                         </Text>
+=======
+                        <img src="/manifesta_logo.png" width="200px"  />
+>>>>>>> 2f444c5ac04d2b8c5095652fabc46ad990434853
                         <Heading color={"gray.800"}>Ingresa con tu cuenta</Heading>
                     </Box>
                     <Box textAlign="left">
